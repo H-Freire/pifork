@@ -56,19 +56,19 @@ debug: ${EXE}
 		openocd -f rpi2.cfg & \
 	fi
 	gdb-multiarch -ex "target extended-remote:3333" \
-								-ex "load" \
-								${EXE}
+                  -ex "load" \
+                      ${EXE}
 
 .PHONY: qemu
 qemu:
 	if ! pgrep qemu-system-arm >/dev/null ; then \
-		qemu-system-arm -s -S -M raspi2b \
-										-kernel ${EXE} & \
+	    qemu-system-arm -s -S -M raspi2b \
+                        -kernel ${EXE} & \
 	fi
 	gdb-multiarch -ex "set architecture arm" \
-								-ex "target extended-remote :1234" \
-								-ex "load" \
-								${EXE}
+                  -ex "target extended-remote :1234" \
+                  -ex "load" \
+                      ${EXE}
 
 .PHONY: clean
 clean:
