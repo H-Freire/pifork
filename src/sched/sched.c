@@ -1,9 +1,9 @@
 #include "sched.h"
-#include "bcm.h"
+#include "../bcm.h"
+#include "../mmu/mmu.h"
 #include <stdint.h>
 
-#define PAGE_COUNT  4096
-#define TIMESLICE    200
+#define TIMESLICE   200
 
 extern uint8_t __stack_user1;
 extern uint8_t __stack_user2;
@@ -17,7 +17,7 @@ static uint32_t ticks;
 static uint32_t slice;
 static uint8_t processes = 2;
 
-tcb_t tcb_list[PAGE_COUNT-1] = {
+tcb_t tcb_list[PAGE_COUNT - 1] = {
   {
     .regs = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     .sp = (uintptr_t)&__stack_user1,
@@ -35,7 +35,7 @@ tcb_t tcb_list[PAGE_COUNT-1] = {
 };
 
 int tid;
-tcb_t *tcb = &tcb_list[0];
+tcb_t *tcb;
 
 void swi_handler(unsigned op) {
   switch (op) {

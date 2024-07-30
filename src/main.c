@@ -1,5 +1,5 @@
 #include "bcm.h"
-#include "sched.h"
+#include "sched/sched.h"
 
 extern void enable_irq(int);
 extern void delay(unsigned int);

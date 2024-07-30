@@ -122,9 +122,10 @@ swi:
   bl swi_handler
   b task_switch
 
-/** @brief Waits for n machine instructions.
+/**
+ * @brief Waits for n machine instructions.
  *
- *  @param n The number of instructions executed.
+ * @param n The number of instructions executed.
  */
 .global delay
 delay:
@@ -132,10 +133,11 @@ delay:
   bne delay
   mov pc, lr
 
-/** @brief Toggle system interrupts.
+/**
+ * @brief Toggle system interrupts.
  *
- *  @param enable The state selector of interrupts to be set
- *         (0 - disabled, other - enabled).
+ * @param enable The state selector of interrupts to be set
+ *        (0 - disabled, other - enabled).
  */
 .global enable_irq
 enable_irq:
@@ -146,8 +148,9 @@ enable_irq:
   msr cpsr, r0
   mov pc, lr
 
-/** @brief Swaps the CPU's context with the chosen
- *         user's
+/**
+ * @brief Swaps the CPU's context with the chosen
+ *        user's
  */
 .global task_switch
 task_switch:

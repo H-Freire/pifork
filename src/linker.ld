@@ -1,6 +1,6 @@
 SECTIONS {
   .text 0x8000: {
-    boot.o(.text)
+    *boot.o(.text)
     *(.text)
   }
 

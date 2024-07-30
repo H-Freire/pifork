@@ -2,12 +2,14 @@
 APP = pifork
 CCVERSION = 12.2.1
 
-# output files
+# output
+OBJDIR = ../obj
+OUTDIR = ../rpi-firmware
 EXE  = ${APP}.elf
 MAP  = ${APP}.map
 LIST = ${APP}.list
-IMG  = ${APP}.img
 HEX  = ${APP}.hex
+IMG  = ${OUTDIR}/${APP}.img
 
 # toolchain
 PREFIX = arm-none-eabi-
@@ -23,14 +25,17 @@ LDFLAGS = -L/usr/lib/gcc/arm-none-eabi/${CCVERSION}/ -lgcc
 
 # input files
 LDSCRIPT = linker.ld
-SOURCES := $(wildcard *.c *.s)
-OBJECTS := $(addsuffix .o,$(basename $(SOURCES)))
+SOURCES := $(wildcard *.c **/*.c *.s **/*.s)
+OBJECTS := $(addprefix ${OBJDIR}/,$(addsuffix .o,$(basename ${SOURCES})))
 
 .PHONY: all
 all: ${EXE} ${LIST} ${IMG} ${HEX}
 
 .PHONY: rebuild
 rebuild: clean all
+
+${OBJDIR}:
+	@mkdir -p ${OBJDIR}
 
 ${EXE}: ${OBJECTS}
 	${LD} -T ${LDSCRIPT} -M=${MAP} ${OBJECTS} -o $@ ${LDFLAGS}
@@ -44,10 +49,12 @@ ${IMG}: ${EXE}
 ${HEX}: ${EXE}
 	${OBJCPY} -O ihex ${EXE} ${HEX}
 
-.c.o:
+${OBJDIR}/%.o: %.c | ${OBJDIR}
+	@mkdir -p $(dir $@)
 	${CC} ${CFLAGS} -c -o $@ $<
 
-.s.o:
+${OBJDIR}/%.o: %.s | ${OBJDIR}
+	@mkdir -p $(dir $@)
 	${AS} -g -o $@ $<
 
 .PHONY: debug
@@ -72,6 +79,6 @@ qemu:
 
 .PHONY: clean
 clean:
-	rm -f *.o ${EXE} ${HEX} ${MAP} ${LIST} ${IMG}
+	rm -rf ${OBJDIR} ${EXE} ${HEX} ${MAP} ${LIST} ${IMG}
 	-killall openocd qemu-system-arm gdb-multiarch
 
