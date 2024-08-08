@@ -1,5 +1,5 @@
 SECTIONS {
-  .text 0x8000: {
+  .text 0x8000 : {
     *boot.o(.text)
     *(.text)
   }
@@ -18,16 +18,27 @@ SECTIONS {
   }
 
   .heapstack : {
-     . = ALIGN(8);
-     __heap = .;
-     . += 32K;
+    . = ALIGN(8);
+    __heap = .;
+    . += 16K;
 
-     __stack_sys = .;
-     . += 4K;
-     __stack_irq = .;
-     . += 4K;
-     __stack_user1 = .;
-     . += 4K;
-     __stack_user2 = .;
-   }
+    __stack_sys = .;
+    . += 4K;
+    __stack_irq = .;
+  }
+
+  . = ALIGN(1M);
+  .user1 : {
+    *(.user1)
+    . += 4K;
+    __stack_user1 = .;
+  }
+
+  . = ALIGN(1M);
+  .user2 : {
+    *(.user2)
+    . += 4K;
+    __stack_user2 = .;
+  }
 }
+

@@ -1,8 +1,5 @@
 .text
 
-/**
- * @brief Enables the system caches.
- */
 .global enable_cache
 enable_cache:
   mrc p15, 0, r0, c1, c0, 0
@@ -15,9 +12,6 @@ enable_cache:
   mcr p15, 0, r0, c1, c0, 0
   mov pc, lr
 
-/**
- * @brief Disables the enable.
- */
 .global disable_mmu
 disable_mmu:
   mrc p15, 0, r2, c1, c0, 0
@@ -27,11 +21,6 @@ disable_mmu:
   dsb
   mov pc, lr
 
-/**
- * @brief Enables the MMU and sets its TTB register.
- *
- * @param ttb Translation Table (L1) address.
- */
 .global enable_mmu
 enable_mmu:
   mvn r2, #0
@@ -40,14 +29,11 @@ enable_mmu:
   mcr p15, 0, r0, c2, c0, 0
   mcr p15, 0, r0, c2, c0, 1
   mrc p15, 0, r2, c1, c0, 0
-  //orr r2, r2, #0x1000
+  // orr r2, r2, #0x1000
   orr r2, r2, #0x5
   mcr p15, 0, r2, c1, c0, 0
   mov pc, lr
 
-/**
- * @brief Invalidates the current TLB state.
- */
 .global flush_tlb
 flush_tlb:
   mov r2, #0

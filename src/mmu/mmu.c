@@ -2,42 +2,39 @@
 
 #define TTB_BASE  0x4000
 
+extern void enable_mmu(uintptr_t ttb_addr);
+
+static inline void _map_section(uint32_t, uint32_t, uint32_t);
+
 typedef struct {
   uint32_t descriptor[PAGE_COUNT];
 } ttb_l1_t;
-#define TTB_L1(X) ((ttb_l1_t *)TTB_BASE)->X
+#define TTB_L1(X) ((ttb_l1_t *)TTB_BASE)->descriptor[X]
 
+// Not used
 typedef struct {
   uint32_t descriptor[256];
 } ttb_l2_t;
 
-/** @brief Inserts a section entry in the L1 table
- *
- *  @param virt  Virtual address established
- *  @param phy   Corresponding physical address
- *  @param flags Aditional flags
- */
-void map_section(uint32_t virt, uint32_t phy, uint32_t flags) {
-  int index = (virt & 0xfff00000) >> 20;
-  int descr = (phy & 0xfff00000) | 0xc02 | flags;
-  TTB_L1(descriptor[index]) = descr;
+void map_section(uint32_t vaddr, uint32_t paddr, uint32_t flags) {
+  // Never remap the kernel, peripherals or mailboxes (for simplicity)
+  if (vaddr < SECTION || vaddr >= PERIPH_BASE) {
+    return;
+  }
+
+  _map_section(vaddr, paddr, flags);
 }
 
-/** @brief Invalidates a L1 section
- *
- *  @param virt Section virtual address
- */
-void map_invalid(uint32_t virt) {
-  int index = (virt & 0xfff00000) >> 20;
-  TTB_L1(descriptor[index]) = 0;
+void map_invalid(uint32_t vaddr) {
+  int index = (vaddr & SECTION_MASK) >> 20;
+  TTB_L1(index) = FAULT_ENTRY;
 }
 
-/** @brief Maps all physical addresses to corresponding (equal)
- *         virtual ones
- */
 void mmu_flat(void) {
-  for (int i = 0; i < 4096; i++) {
-    map_section(i << 20, i << 20, 0x0000);
+  // Kernel mapping
+  _map_section(0, 0, AP_PRIV);
+  for (int i = 1; i < PAGE_COUNT; i++) {
+    _map_section(i << 20, i << 20, AP_RW);
   }
 }
 
@@ -46,3 +43,11 @@ void mmu_init(void) {
   enable_mmu(TTB_BASE);
 }
 
+void restart_mmu(void) { enable_mmu(TTB_BASE); }
+
+static inline void _map_section(uint32_t vaddr, uint32_t paddr,
+                                uint32_t flags) {
+  int index = (vaddr & SECTION_MASK) >> 20;
+  int descr = (paddr & SECTION_MASK) | flags | SECTION_ENTRY;
+  TTB_L1(index) = descr;
+}
