@@ -3,8 +3,8 @@ APP = pifork
 CCVERSION = 12.2.1
 
 # output
-OBJDIR = ../obj
-OUTDIR = ../rpi-firmware
+OBJDIR = obj
+OUTDIR = rpi-firmware
 EXE  = ${APP}.elf
 MAP  = ${APP}.map
 LIST = ${APP}.list
@@ -21,11 +21,12 @@ OBJDMP = ${PREFIX}objdump
 
 # build options
 CFLAGS  = -Wall -march=armv7-a -mtune=cortex-a7 -g -O1
-LDFLAGS = -L/usr/lib/gcc/arm-none-eabi/${CCVERSION}/ -lgcc
+LDFLAGS = -L/usr/lib/gcc/arm-none-eabi/${CCVERSION}/ -lgcc -L/lib/arm-none-eabi/newlib/ -lc
 
 # input files
+SRC = src
 LDSCRIPT = linker.ld
-SOURCES := $(wildcard *.c **/*.c *.s **/*.s)
+SOURCES := $(wildcard ${SRC}/**/*.c ${SRC}/*.c ${SRC}/**/*.s ${SRC}/*.s)
 OBJECTS := $(addprefix ${OBJDIR}/,$(addsuffix .o,$(basename ${SOURCES})))
 
 .PHONY: all
