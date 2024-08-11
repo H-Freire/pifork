@@ -75,6 +75,7 @@ static void _fork(void) {
     }
     mem_addr = (mem_addr + 1 + 8 * i) * SECTION;
     mem_list[i] |= (1 << (7 - mem_addr));
+    break;
   }
 
   disable_mmu();
@@ -95,6 +96,7 @@ static void _fork(void) {
   // PID write on parent and child, respectively
   tcb->regs[0] = pid;
   tcb_list[pid].regs[0] = 0;
+  tcb_list[pid].parent_id = tid;
 }
 
 static void _waitpid(pid_t pid) {

@@ -68,7 +68,7 @@ debug: ${EXE}
 		${EXE}
 
 .PHONY: qemu
-qemu:
+qemu: ${EXE}
 	if ! pgrep qemu-system-arm >/dev/null ; then \
 	    qemu-system-arm -s -S -M raspi2b \
 			-kernel ${EXE} & \

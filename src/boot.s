@@ -122,7 +122,6 @@ swi:
   bl swi_handler
   b task_switch
 
-
 /**
  * @brief Toggle system interrupts.
  *
