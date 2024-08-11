@@ -25,6 +25,25 @@ panic:
    b panic
 
 reset:
+  // Checks execution privilege EL1 (SVC) or EL2 (HYP)
+  mrs r0, cpsr
+  and r0, r0, #0x1f
+  cmp r0, #0x1a
+  bne 0f
+
+  // Exit mode EL2 (HYP)
+  mrs r0, cpsr
+  bic r0, r0, #0x1f
+  orr r0, r0, #0x13
+  msr spsr_cxsf, r0
+  add lr, pc, #4       // aponta o rótulo 'continua'
+  msr ELR_hyp, lr
+
+  // Returns from the exception handling
+  // with lower privilege
+  eret
+
+0:
   // appoint core 0
   mrc p15, 0, r0, c0, c0, 5
   ands r0, r0, #0x3

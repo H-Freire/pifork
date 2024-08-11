@@ -1,4 +1,4 @@
-kernel=kernel.img
+kernel=pifork.img
 kernel_address=0x8000
 arm_64bit=0
 disable_commandline_tags=1

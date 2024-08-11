@@ -1,5 +1,5 @@
 # metadata
-APP = kernel
+APP = pifork
 CCVERSION = 12.2.1
 
 # output files
