@@ -91,12 +91,12 @@ static void _fork(void) {
 
   tcb_list[pid] = *tcb;
   tcb_list[pid].paddr = mem_addr;
-  processes++;
 
   // PID write on parent and child, respectively
   tcb->regs[0] = pid;
   tcb_list[pid].regs[0] = 0;
   tcb_list[pid].parent_id = tid;
+  processes++;
 }
 
 static void _waitpid(pid_t pid) {
@@ -122,6 +122,7 @@ static void _exit(int status) {
     *((int *)(uintptr_t)parent->regs[2]) = status;
     map_invalid(parent->pc);
 
+    parent->regs[1] = tid;
     parent->state = READY;
   }
   // Free physical memory section

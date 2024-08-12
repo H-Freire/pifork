@@ -1,8 +1,8 @@
-#include "bcm.h"
+#include "../src/bcm.h"
 
 #include "../include/pifork.h"
 
-#define DELAY(instr)  for (int i = 0; i < instr; i++) \
+#define DELAY(instr)  for (int i = 0; i < instr; i++)  \
                         asm volatile("nop");
 
 void __attribute__((section(".user1"))) user1_main(void) {
@@ -18,29 +18,29 @@ void __attribute__((section(".user1"))) user1_main(void) {
   if (!pid) {
     for (int i = 0; i < 15; i++) {
       GPIO_REG(gpset[0]) = __bit(19);
-      DELAY(400000);
+      DELAY(2000000);
       GPIO_REG(gpclr[0]) = __bit(19);
-      DELAY(400000);
+      DELAY(2000000);
     }
   } else {
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 8; i++) {
       GPIO_REG(gpset[0]) = __bit(16);
-      DELAY(300000);
+      DELAY(1000000);
       GPIO_REG(gpclr[0]) = __bit(16);
-      DELAY(300000);
+      DELAY(1000000);
     }
     pid_awaited = wait(&stat);
 
     if (WIFEXITED(stat) && !WEXITSTATUS(stat)) {
-      for (pid_t i = 0; i < pid_awaited; i++) {
+      for (int i = 0; i < pid_awaited; i++) {
         GPIO_REG(gpset[0]) = __bit(16);
-        DELAY(300000);
+        DELAY(500000);
         GPIO_REG(gpclr[0]) = __bit(16);
-        DELAY(300000);
+        DELAY(500000);
       }
     }
   }
-  exit(0);
+  exit(EXIT_SUCCESS);
 }
 
 void __attribute__((section(".user2"))) user2_main(void) {
@@ -49,8 +49,9 @@ void __attribute__((section(".user2"))) user2_main(void) {
 
   while (1) {
     GPIO_REG(gpset[0]) = __bit(20);
-    DELAY(500000);
+    DELAY(600000);
     GPIO_REG(gpclr[0]) = __bit(20);
-    DELAY(500000);
+    DELAY(600000);
   }
+  exit(EXIT_SUCCESS);
 }

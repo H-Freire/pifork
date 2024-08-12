@@ -1,5 +1,5 @@
-#include "../sched/sched.h"
 #include "../mmu/mmu.h"
+#include "../sched/sched.h"
 
 extern void enable_irq(int);
 
@@ -9,4 +9,9 @@ void sys_main(void) {
   sched_init(100);
 
   asm volatile("b task_switch");
+}
+
+void dummy(void) {
+  while (1)
+    ;
 }

@@ -13,16 +13,32 @@ _start:
   ldr pc, _irq
   ldr pc, _fiq
 _reset:  .word reset
-_undef:  .word panic
+_undef:  .word undef
 _swi:    .word swi
-_iabort: .word panic
-_dabort: .word panic
+_iabort: .word iabort
+_dabort: .word databort
 _irq:    .word irq
-_fiq:    .word panic
+_fiq:    .word fiq
+
+databort:
+   wfi
+   b databort
+
+iabort:
+   wfi
+   b iabort
+
+undef:
+   wfi
+   b undef
+
+fiq:
+   wfi
+   b fiq
 
 panic:
-   wfi
-   b panic
+  wfi
+  b panic
 
 reset:
   // Checks execution privilege EL1 (SVC) or EL2 (HYP)
