@@ -13,16 +13,32 @@ _start:
   ldr pc, _irq
   ldr pc, _fiq
 _reset:  .word reset
-_undef:  .word panic
+_undef:  .word undef
 _swi:    .word swi
-_iabort: .word panic
-_dabort: .word panic
+_iabort: .word iabort
+_dabort: .word databort
 _irq:    .word irq
-_fiq:    .word panic
+_fiq:    .word fiq
+
+databort:
+   wfi
+   b databort
+
+iabort:
+   wfi
+   b iabort
+
+undef:
+   wfi
+   b undef
+
+fiq:
+   wfi
+   b fiq
 
 panic:
-   wfi
-   b panic
+  wfi
+  b panic
 
 reset:
   // Checks execution privilege EL1 (SVC) or EL2 (HYP)
@@ -88,7 +104,7 @@ irq:
   ldr r0, [r0]
 
   // update user registers
-  stmib r0, {r1-r14}^
+  stmib r0, {r1-lr}^
   str lr, [r0, #60]
   mrs r1, spsr
   str r1, [r0, #64]
@@ -108,7 +124,7 @@ swi:
   ldr r0, [r0]
 
   // update user registers
-  stmib r0, {r1-r14}^
+  stmib r0, {r1-lr}^
   str lr, [r0, #60]
   mrs r1, spsr
   str r1, [r0, #64]
@@ -122,20 +138,11 @@ swi:
   bl swi_handler
   b task_switch
 
-/** @brief Waits for n machine instructions.
+/**
+ * @brief Toggle system interrupts.
  *
- *  @param n The number of instructions executed.
- */
-.global delay
-delay:
-  subs r0, r0, #1
-  bne delay
-  mov pc, lr
-
-/** @brief Toggle system interrupts.
- *
- *  @param enable The state selector of interrupts to be set
- *         (0 - disabled, other - enabled).
+ * @param enable The state selector of interrupts to be set
+ *               (0 - disabled, other - enabled).
  */
 .global enable_irq
 enable_irq:
@@ -146,8 +153,9 @@ enable_irq:
   msr cpsr, r0
   mov pc, lr
 
-/** @brief Swaps the CPU's context with the chosen
- *         user's
+/**
+ * @brief Swaps the CPU's context with the chosen
+ *        user's
  */
 .global task_switch
 task_switch:
@@ -157,7 +165,7 @@ task_switch:
   // load user context
   ldr r1, [r0, #64]
   msr spsr, r1
-  ldmib r0, {r1-r14}^
+  ldmib r0, {r1-lr}^
   ldr lr, [r0, #60]
   ldr r0, [r0]
 
