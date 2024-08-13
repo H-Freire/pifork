@@ -26,7 +26,7 @@ void map_section(uint32_t vaddr, uint32_t paddr, uint32_t flags) {
 }
 
 void map_invalid(uint32_t vaddr) {
-  int index = (vaddr & SECTION_MASK) >> 20;
+  uint32_t index = (vaddr & SECTION_MASK) >> 20;
   TTB_L1(index) = FAULT_ENTRY;
 }
 
@@ -54,7 +54,8 @@ void restart_mmu(void) { enable_mmu(TTB_BASE); }
 
 static inline void _map_section(uint32_t vaddr, uint32_t paddr,
                                 uint32_t flags) {
-  int index = (vaddr & SECTION_MASK) >> 20;
-  int descr = (paddr & SECTION_MASK) | flags | SECTION_ENTRY;
+  uint32_t index = (vaddr & SECTION_MASK) >> 20;
+  uint32_t descr = (paddr & SECTION_MASK) | flags | SECTION_ENTRY;
   TTB_L1(index) = descr;
 }
+
