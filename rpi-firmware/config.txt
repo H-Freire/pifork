@@ -3,3 +3,4 @@ kernel_address=0x8000
 arm_64bit=0
 disable_commandline_tags=1
 enable_jtag_gpio=1
+gpio=47=op,dl

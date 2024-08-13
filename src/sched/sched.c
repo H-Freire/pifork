@@ -19,7 +19,7 @@ uint32_t slice;
 uint8_t processes = 2;
 
 uint8_t mem_list[MEM_SECTIONS] = {(uint8_t)((1 << 7) + (1 << 6))};
-tcb_t tcb_list[USER_SECTIONS+1] = {
+tcb_t tcb_list[USER_SECTIONS + 1] = {
     {
         .regs  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         .sp    = (uintptr_t)&__stack_user1,
@@ -61,7 +61,8 @@ void sched_init(uint32_t timer_freq) {
 }
 
 void schedule(void) {
-  pid_t pid, pcount = 0;
+  pid_t pid = tid,
+        pcount = 0;
 
   // Dummy process whenever no other is available
   if (!processes) {
@@ -71,7 +72,7 @@ void schedule(void) {
   }
 
   do {
-    pid = (tid + 1) % USER_SECTIONS;
+    pid = (pid + 1) % USER_SECTIONS;
     pcount++;
   } while (tcb_list[pid].state != READY && pcount < USER_SECTIONS);
 
@@ -87,7 +88,8 @@ void schedule(void) {
     DSB();
     asm volatile("mcr p15,0,%0,c13,c0,1 \n\t"
                  :
-                 : "r"(pid));
+                 : "r"(pid)
+                 : "memory");
 
     map_section(tcb->pc, tcb->paddr, AP_RW | ASID_SPEC);
     DSB();

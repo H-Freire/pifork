@@ -2,6 +2,7 @@
 
 .extern tcb
 .extern sys_main
+.extern forced_exit
 
 _start:
   ldr pc, _reset
@@ -13,28 +14,12 @@ _start:
   ldr pc, _irq
   ldr pc, _fiq
 _reset:  .word reset
-_undef:  .word undef
+_undef:  .word panic
 _swi:    .word swi
-_iabort: .word iabort
-_dabort: .word databort
+_iabort: .word panic
+_dabort: .word forced_exit
 _irq:    .word irq
-_fiq:    .word fiq
-
-databort:
-   wfi
-   b databort
-
-iabort:
-   wfi
-   b iabort
-
-undef:
-   wfi
-   b undef
-
-fiq:
-   wfi
-   b fiq
+_fiq:    .word panic
 
 panic:
   wfi
@@ -52,7 +37,8 @@ reset:
   bic r0, r0, #0x1f
   orr r0, r0, #0x13
   msr spsr_cxsf, r0
-  add lr, pc, #4       // aponta o rótulo 'continua'
+  // Points to label '0'
+  add lr, pc, #4
   msr ELR_hyp, lr
 
   // Returns from the exception handling
@@ -60,7 +46,7 @@ reset:
   eret
 
 0:
-  // appoint core 0
+  // Appoint core 0
   mrc p15, 0, r0, c0, c0, 5
   ands r0, r0, #0x3
   bne hang
@@ -73,7 +59,7 @@ reset:
   msr cpsr, r0
   ldr sp, =__stack_sys
 
-  // interrupt vector copying
+  // Interrupt vector copying
   ldr r0, =_start
   mov r1, #0x0000
   ldmia r0!, {r2-r9}
@@ -81,7 +67,7 @@ reset:
   ldmia r0!, {r2-r9}
   stmia r1!, {r2-r9}
 
-  // bss clearing
+  // BSS clearing
   ldr r0, =__bss_start
   ldr r1, =__bss_end
   mov r2, #0
@@ -97,13 +83,13 @@ hang:
   b hang
 
 irq:
-  // load current task status
+  // Load current task status
   sub lr, lr, #4
   push {r0}
   ldr r0, =tcb
   ldr r0, [r0]
 
-  // update user registers
+  // Update user registers
   stmib r0, {r1-lr}^
   str lr, [r0, #60]
   mrs r1, spsr
@@ -111,19 +97,19 @@ irq:
   pop {r1}
   str r1, [r0]
 
-  // assign a task (same or new) to the current core
+  // Assign a task (same or new) to the current core
   bl irq_handler
   b task_switch
 
 swi:
-  // disable interrupts
+  // Disable interrupts
   cpsid if
 
   push {r0}
   ldr r0, =tcb
   ldr r0, [r0]
 
-  // update user registers
+  // Update user registers
   stmib r0, {r1-lr}^
   str lr, [r0, #60]
   mrs r1, spsr
@@ -131,10 +117,10 @@ swi:
   pop {r1}
   str r1, [r0]
 
-  // syscall param
+  // Syscall param
   mov r0, r1
 
-  // handle call and dispatch a task
+  // Handle call and dispatch a task
   bl swi_handler
   b task_switch
 
@@ -162,13 +148,13 @@ task_switch:
   ldr r0, =tcb
   ldr r0, [r0]
 
-  // load user context
+  // Load user context
   ldr r1, [r0, #64]
   msr spsr, r1
   ldmib r0, {r1-lr}^
   ldr lr, [r0, #60]
   ldr r0, [r0]
 
-  // switch context
+  // Switch context
   movs pc, lr
 

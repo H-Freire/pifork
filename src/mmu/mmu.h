@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include "../bcm.h"
+#include "../sched/sched.h"
 
 #define PAGE_COUNT             4096
 #define SECTION            0x100000
@@ -27,6 +28,10 @@
 // Defines if the entry is process specific (ASID).
 // See [https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/Translation-Lookaside-Buffers--TLBs-/Global-and-non-global-regions-in-the-virtual-memory-map?lang=en]
 #define ASID_SPEC         __bit(17)
+
+// Defines if the section can be fetched for execution
+// See [https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/Memory-access-control/The-Execute-Never--XN--attribute-and-instruction-prefetching?lang=en]
+#define NOT_EXE            __bit(4)
 
 // per section caching and buffering
 #define CACHE_WT                0x8

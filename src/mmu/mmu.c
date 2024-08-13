@@ -31,10 +31,17 @@ void map_invalid(uint32_t vaddr) {
 }
 
 void mmu_flat(void) {
-  // Kernel mapping
+  // Kernel
   _map_section(0, 0, AP_PRIV);
-  for (int i = 1; i < PAGE_COUNT; i++) {
+
+  // User
+  for (int i = 1; i < USER_SECTIONS + 1; i++) {
     _map_section(i << 20, i << 20, AP_RW);
+  }
+
+  // Peripherals
+  for (int i = USER_SECTIONS + 1; i < PAGE_COUNT; i++) {
+    _map_section(i << 20, i << 20, AP_RW | NOT_EXE);
   }
 }
 

@@ -25,8 +25,9 @@ LDFLAGS = -L/usr/lib/gcc/arm-none-eabi/${CCVERSION}/ -lgcc -L/lib/arm-none-eabi/
 
 # input files
 SRC = src
-EXAMPLE = 1
+EXAMPLE = wait
 LDSCRIPT = linker.ld
+
 SOURCES := $(wildcard ${SRC}/**/*.c ${SRC}/*.c ${SRC}/**/*.s ${SRC}/*.s) examples/${EXAMPLE}.c
 OBJECTS := $(addprefix ${OBJDIR}/,$(addsuffix .o,$(basename ${SOURCES})))
 

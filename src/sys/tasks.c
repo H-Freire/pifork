@@ -113,20 +113,34 @@ static void _waitpid(pid_t pid) {
 }
 
 static void _exit(int status) {
-  tcb_t *parent = &tcb_list[tcb->parent_id];
+  tcb_t *parent = NULL;
   uint8_t mem_index = tcb->paddr / SECTION - 1;
 
-  tcb->state = EXITED;
-  if (parent->state == BLOCKED || parent->state == -(tid + 2)) {
-    map_section(parent->pc, parent->paddr, AP_PRIV);
-    *((int *)(uintptr_t)parent->regs[2]) = status;
-    map_invalid(parent->pc);
+  if (tcb->parent_id > -1) {
+    parent = &tcb_list[tcb->parent_id];
+  }
 
-    parent->regs[1] = tid;
+  if (parent && (parent->state == BLOCKED || parent->state == -(tid + 2))) {
+    // Valid pointer passed in (state of process termination is to be writen back)
+    if (parent->regs[2]) {
+      map_section(parent->pc, parent->paddr, AP_PRIV);
+      *((int *)(uintptr_t)parent->regs[2]) = status;
+      map_invalid(parent->pc);
+    }
+
+    parent->regs[0] = tid;
     parent->state = READY;
   }
   // Free physical memory section
   mem_list[mem_index / 8] &= ~(1 << (7 - (mem_index % 8)));
+
+  tcb->state = EXITED;
   processes--;
   schedule();
 }
+
+void forced_exit(void) {
+  GPIO_REG(gpset[1]) = __bit(14);
+  _exit(EXIT_FAILURE);
+}
+

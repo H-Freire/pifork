@@ -2,7 +2,7 @@
 
 #include "../include/pifork.h"
 
-#define DELAY(instr)  for (int i = 0; i < instr; i++)  \
+#define DELAY(instr)  for (int i = 0; i < (instr); i++)  \
                         asm volatile("nop");
 
 void __attribute__((section(".user1"))) user1_main(void) {
@@ -16,7 +16,7 @@ void __attribute__((section(".user1"))) user1_main(void) {
 
   pid = fork();
   if (!pid) {
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 12; i++) {
       GPIO_REG(gpset[0]) = __bit(19);
       DELAY(2000000);
       GPIO_REG(gpclr[0]) = __bit(19);
@@ -31,7 +31,7 @@ void __attribute__((section(".user1"))) user1_main(void) {
     }
     pid_awaited = wait(&stat);
 
-    if (WIFEXITED(stat) && !WEXITSTATUS(stat)) {
+    if (WIFEXITED(stat) && !WEXITSTATUS(stat) && pid_awaited == pid) {
       for (int i = 0; i < pid_awaited; i++) {
         GPIO_REG(gpset[0]) = __bit(16);
         DELAY(500000);
