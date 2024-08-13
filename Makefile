@@ -20,7 +20,7 @@ OBJCPY = ${PREFIX}objcopy
 OBJDMP = ${PREFIX}objdump
 
 # build options
-CFLAGS  = -Wall -march=armv7-a -mtune=cortex-a7 -g -O1
+CFLAGS  = -Wall -march=armv7-a -mtune=cortex-a7 -g -O1 -Iinclude
 LDFLAGS = -L/usr/lib/gcc/arm-none-eabi/${CCVERSION}/ -lgcc -L/lib/arm-none-eabi/newlib/ -lc
 
 # input files

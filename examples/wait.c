@@ -1,6 +1,4 @@
-#include "../src/bcm.h"
-
-#include "../include/pifork.h"
+#include <pifork.h>
 
 #define DELAY(instr)  for (int i = 0; i < (instr); i++)  \
                         asm volatile("nop");
