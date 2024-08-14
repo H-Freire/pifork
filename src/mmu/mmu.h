@@ -22,7 +22,7 @@
 
 // Access Permission (read-only privileged configurations excluded)
 #define AP_PRIV        (0b01 << 10)
-#define AP_RO          (0b01 << 10)
+#define AP_RO          (0b10 << 10)
 #define AP_RW          (0b11 << 10)
 
 // Defines if the entry is process specific (ASID).
