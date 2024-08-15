@@ -57,7 +57,7 @@ reset:
 
   mov r0, #0xd3
   msr cpsr, r0
-  ldr sp, =__stack_sys
+  ldr sp, =__stack_svc
 
   // Interrupt vector copying
   ldr r0, =_start

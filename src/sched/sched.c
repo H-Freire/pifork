@@ -7,8 +7,8 @@
 #define ISB()     asm volatile("isb \n\t")
 #define FREQ(hz)  ((uint32_t)(1e6 / (hz)))
 
-extern uint8_t __stack_user1;
-extern uint8_t __stack_user2;
+extern uint8_t __stack_usr1;
+extern uint8_t __stack_usr2;
 
 extern int user1_main(void);
 extern int user2_main(void);
@@ -22,7 +22,7 @@ uint8_t mem_list[MEM_SECTIONS] = {(uint8_t)((1 << 7) + (1 << 6))};
 tcb_t tcb_list[USER_SECTIONS + 1] = {
     {
         .regs  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        .sp    = (uintptr_t)&__stack_user1,
+        .sp    = (uintptr_t)&__stack_usr1,
         .lr    = 0,
         .pc    = (uintptr_t)user1_main,
         .cpsr  = 0x10,
@@ -32,7 +32,7 @@ tcb_t tcb_list[USER_SECTIONS + 1] = {
     },
     {
         .regs  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        .sp    = (uintptr_t)&__stack_user2,
+        .sp    = (uintptr_t)&__stack_usr2,
         .lr    = 0,
         .pc    = (uintptr_t)user2_main,
         .cpsr  = 0x10,

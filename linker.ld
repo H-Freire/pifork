@@ -22,7 +22,7 @@ SECTIONS {
     __heap = .;
     . += 16K;
 
-    __stack_sys = .;
+    __stack_svc = .;
     . += 4K;
     __stack_irq = .;
   }
@@ -31,14 +31,14 @@ SECTIONS {
   .user1 : {
     *(.user1)
     . += 4K;
-    __stack_user1 = .;
+    __stack_usr1 = .;
   }
 
   . = ALIGN(1M);
   .user2 : {
     *(.user2)
     . += 4K;
-    __stack_user2 = .;
+    __stack_usr2 = .;
   }
 }
 
