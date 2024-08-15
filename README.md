@@ -10,7 +10,7 @@ A Raspberry Pi 2 implementation of a simple operational system with UNIX standar
 .
 ├── include/      # Public header files
 ├── src/          # Source code
-├── rpi-firmware/ # Base firmware and output directory if image
+├── rpi-firmware/ # Base firmware and output image
 ├── examples/     # Use cases
 └── Makefile      # Build instructions
 ```
@@ -72,5 +72,5 @@ or
 ```
 make rebuild
 ```
-Both will remove the compiled executable, image and object files, while the second command will also recompile those artifacts. The considerations noted on the [build instructions](#building-the-project) should be taken into consideration when running the latter.
+Both will remove the compiled executable, image and object files, while the second command will also recompile those artifacts. The considerations noted on [build steps](#building-the-project) should be taken into consideration when running the latter.
 
