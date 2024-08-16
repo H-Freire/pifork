@@ -140,7 +140,9 @@ static void _exit(int status) {
 }
 
 void forced_exit(void) {
-  GPIO_REG(gpset[1]) = __bit(14);
+  GPIO_REG(gpset[1]) = __bit(15);
+
   _exit(EXIT_FAILURE);
+  asm volatile("b task_switch");
 }
 

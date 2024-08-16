@@ -16,7 +16,7 @@ _start:
 _reset:  .word reset
 _undef:  .word panic
 _swi:    .word swi
-_iabort: .word panic
+_iabort: .word forced_exit
 _dabort: .word forced_exit
 _irq:    .word irq
 _fiq:    .word panic
@@ -54,6 +54,10 @@ reset:
   mov r0, #0xd2
   msr cpsr, r0
   ldr sp, =__stack_irq
+
+  mov r0, #0xd7
+  msr cpsr, r0
+  ldr sp, =__stack_abort
 
   mov r0, #0xd3
   msr cpsr, r0

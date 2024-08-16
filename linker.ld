@@ -25,6 +25,8 @@ SECTIONS {
     __stack_svc = .;
     . += 4K;
     __stack_irq = .;
+    . += 4K;
+    __stack_abort = .;
   }
 
   . = ALIGN(1M);
