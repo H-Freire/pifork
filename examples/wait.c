@@ -1,8 +1,7 @@
 #include <pifork.h>
 
-#define DELAY(instr)                                                           \
-  for (int i = 0; i < (instr); i++)                                            \
-    asm volatile("nop");
+#define DELAY(instr)  for (int i = 0; i < (instr); i++)  \
+                        asm volatile("nop");
 
 void __attribute__((section(".user1"))) user1_main(void) {
   int stat;

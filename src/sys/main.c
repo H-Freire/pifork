@@ -9,6 +9,7 @@ void sys_main(void) {
 
   mmu_flat();
   mmu_init();
+  enable_cache();
   sched_init(100);
 
   asm volatile("b task_switch");
