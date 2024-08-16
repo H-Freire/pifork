@@ -5,7 +5,7 @@
 
 void __attribute__((section(".user1"))) user1_main(void) {
   // Maps to the first 1 MiB section (kernel)
-  int *ptr = (int *)0xC0DE;
+  volatile int *ptr = (int *)0xC0DE;
 
   // Setup GPIO 16 as output
   GPIO_REG(gpfsel[1]) = (GPIO_REG(gpfsel[1]) & ~(0x7 << 18)) | __bit(18);
