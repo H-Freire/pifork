@@ -11,6 +11,7 @@ A Raspberry Pi 2 implementation of a simple operational system with UNIX standar
 ├── include/      # Public header files
 ├── src/          # Source code
 ├── rpi-firmware/ # Base firmware and output image
+├── doc/          # Documentation
 ├── examples/     # Use cases
 └── Makefile      # Build instructions
 ```
